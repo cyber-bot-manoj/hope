@@ -65,30 +65,30 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Banner / Heading */}
       <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug sm:leading-tight">
           Your Direct Lifeline to the Right Medical Help in Every Emergency.
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-2xl font-medium">
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium leading-relaxed">
           Instant emergency SOS, live ambulance dispatch, and real-time hospital ICU bed tracking — when every second matters.
         </p>
       </div>
 
       {/* TOP ROW: SOS Card + Current Location Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
         
         {/* Left: Emergency SOS Card (7 cols) */}
-        <div className="lg:col-span-7 rounded-2xl bg-[#091829] text-white p-6 sm:p-7 shadow-xl border border-slate-800 relative overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-7 rounded-2xl bg-[#091829] text-white p-4 sm:p-7 shadow-xl border border-slate-800 relative overflow-hidden flex flex-col justify-between">
           <div className="relative z-10">
             {/* Red Badge */}
-            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30 mb-4">
+            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30 mb-3 sm:mb-4">
               Emergency
             </span>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               {/* Pulsing SOS Button */}
               <button
                 onClick={handleSosClick}
-                className="relative group shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-rose-700 via-rose-600 to-red-500 hover:from-rose-600 hover:to-red-400 text-white font-black text-2xl tracking-wider shadow-2xl shadow-rose-600/50 flex items-center justify-center cursor-pointer transition-transform active:scale-95 mx-auto sm:mx-0"
+                className="relative group shrink-0 w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-rose-700 via-rose-600 to-red-500 hover:from-rose-600 hover:to-red-400 text-white font-black text-xl sm:text-2xl tracking-wider shadow-2xl shadow-rose-600/50 flex items-center justify-center cursor-pointer transition-transform active:scale-95 mx-auto sm:mx-0"
               >
                 {/* Pulsing rings */}
                 <span className="absolute inset-0 rounded-full border-2 border-rose-400/80 animate-ping pointer-events-none" />
@@ -98,25 +98,25 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
               {/* Text Info */}
               <div className="flex-1 text-center sm:text-left">
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-2">
+                <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white mb-1.5 sm:mb-2">
                   Need help right now?
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed mb-4">
+                <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed mb-3 sm:mb-4">
                   Tap SOS to start a guided emergency flow. You'll confirm before anything is created — accidental taps are safe.
                 </p>
                 
                 {/* Emergency Direct Call Pills */}
-                <div className="flex items-center justify-center sm:justify-start gap-2.5">
+                <div className="flex flex-row gap-2 justify-center sm:justify-start w-full sm:w-auto">
                   <a
                     href="tel:112"
-                    className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    className="flex-1 sm:flex-initial px-3.5 py-2 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <Phone className="w-3.5 h-3.5 text-rose-400" />
                     <span>Call 112</span>
                   </a>
                   <a
                     href="tel:108"
-                    className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    className="flex-1 sm:flex-initial px-3.5 py-2 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <Truck className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Ambulance 108</span>
@@ -131,7 +131,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         </div>
 
         {/* Right: Current Location Card (5 cols) */}
-        <div className="lg:col-span-5 rounded-2xl bg-white border border-slate-200/90 p-5 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-5 rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -179,7 +179,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </div>
 
           {/* Real Live Map Frame (OpenStreetMap) */}
-          <div className="w-full h-36 rounded-xl border border-slate-200 relative overflow-hidden bg-slate-100 shadow-inner">
+          <div className="w-full h-32 sm:h-36 rounded-xl border border-slate-200 relative overflow-hidden bg-slate-100 shadow-inner">
             <iframe
               title="Live Emergency Map"
               className="w-full h-full border-0"
@@ -198,7 +198,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       </div>
 
       {/* MIDDLE ROW: 4 Action Buttons */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
         {[
           { label: 'Find hospitals', icon: Building2, view: 'hospitals' as AppView },
           ...(activeEmergencies.length > 0
@@ -215,7 +215,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 playClick()
                 onNavigateView(item.view)
               }}
-              className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/90 hover:border-teal-500/50 hover:bg-teal-50/20 text-slate-800 transition-all shadow-sm flex items-center gap-3 font-semibold text-xs sm:text-sm active:scale-95 group"
+              className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200/90 hover:border-teal-500/50 hover:bg-teal-50/20 text-slate-800 transition-all shadow-sm flex items-center gap-2.5 sm:gap-3 font-semibold text-xs sm:text-sm active:scale-95 group"
             >
               <div className="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-teal-100 text-slate-700 group-hover:text-teal-700 flex items-center justify-center shrink-0 transition-colors">
                 <Icon className="w-4 h-4" />

@@ -12,6 +12,8 @@ import { EmergencyHistoryView } from './components/EmergencyHistoryView'
 import { HospitalPortalView } from './components/HospitalPortalView'
 import { SettingsView } from './components/SettingsView'
 import { LocationEditModal } from './components/LocationEditModal'
+import { MobileHeader } from './components/MobileHeader'
+import { MobileBottomNav } from './components/MobileBottomNav'
 import { 
   initialHospitals, 
   initialAmbulance, 
@@ -30,6 +32,7 @@ import { playClick, playEmergencyPulse } from './utils/emergencyAudio'
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>('home')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hospitals, setHospitals] = useState<Hospital[]>(initialHospitals)
   const [ambulance, setAmbulance] = useState<Ambulance>(initialAmbulance)
   const [profile, setProfile] = useState<EmergencyProfileData>(initialProfileData)
@@ -158,18 +161,28 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col md:flex-row font-sans selection:bg-teal-500/20 selection:text-teal-900">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col md:flex-row font-sans selection:bg-teal-500/20 selection:text-teal-900 overflow-x-hidden">
       
-      {/* Sticky Left Sidebar Navigation */}
+      {/* Mobile Top Header (Phones < 768px) */}
+      <MobileHeader
+        currentLocation={currentLocation}
+        onOpenEditLocation={() => setIsLocationModalOpen(true)}
+        onTriggerSos={handleOpenSos}
+        onOpenMenu={() => setIsMobileMenuOpen(true)}
+      />
+
+      {/* Sticky Left Sidebar Navigation (Desktop) + Slide-out Drawer (Mobile) */}
       <Sidebar
         currentView={currentView}
         setCurrentView={setCurrentView}
         onTriggerSos={handleOpenSos}
         activeEmergencyCount={activeEmergencies.length}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Viewport */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 min-h-screen">
+      <main className="flex-1 overflow-y-auto px-3.5 py-4 sm:p-6 lg:p-8 min-h-screen pt-16 md:pt-6 pb-24 md:pb-8 w-full max-w-full overflow-x-hidden">
         {currentView === 'home' && (
           <HomeDashboard
             hospitals={hospitals}
@@ -268,6 +281,15 @@ export const App: React.FC = () => {
         currentLocation={currentLocation}
         onSaveLocation={(loc) => setCurrentLocation({ ...loc, isDetecting: false })}
         onDetectLocation={detectLiveLocation}
+      />
+
+      {/* Mobile Bottom Navigation Bar (Phones < 768px) */}
+      <MobileBottomNav
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        onTriggerSos={handleOpenSos}
+        activeEmergencyCount={activeEmergencies.length}
+        onOpenMore={() => setIsMobileMenuOpen(true)}
       />
     </div>
   )

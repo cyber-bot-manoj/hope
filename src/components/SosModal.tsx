@@ -72,8 +72,8 @@ export const SosModal: React.FC<SosModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-[#0a1826] border border-rose-500/40 rounded-3xl p-6 sm:p-8 text-white shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-[96%] sm:w-full max-w-lg bg-[#0a1826] border border-rose-500/40 rounded-3xl p-5 sm:p-8 text-white shadow-2xl overflow-hidden max-h-[92vh] overflow-y-auto">
         
         {/* Ambient red pulse glow */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/20 rounded-full blur-[80px] pointer-events-none" />

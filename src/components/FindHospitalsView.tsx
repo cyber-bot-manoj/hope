@@ -90,7 +90,7 @@ export const FindHospitalsView: React.FC<FindHospitalsViewProps> = ({
         </div>
 
         {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 pt-1">
+        <div className="flex overflow-x-auto gap-2 pt-1 pb-1 scroll-smooth select-none">
           {filterTags.map((tag) => (
             <button
               key={tag}
@@ -98,7 +98,7 @@ export const FindHospitalsView: React.FC<FindHospitalsViewProps> = ({
                 playClick()
                 setActiveFilter(tag)
               }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${
                 activeFilter === tag
                   ? 'bg-teal-600 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
