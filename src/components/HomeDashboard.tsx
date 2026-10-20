@@ -15,7 +15,8 @@ import {
   Clock,
   ShieldCheck,
   Check,
-  Navigation
+  Navigation,
+  Zap
 } from 'lucide-react'
 import { Droplet } from 'lucide-react'
 import { Hospital, EmergencyRequest, TrustedContact, AppView } from '../types/hope'
@@ -63,14 +64,60 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* Top Banner / Heading */}
-      <div>
-        <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug sm:leading-tight">
-          Your Direct Lifeline to the Right Medical Help in Every Emergency.
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium leading-relaxed">
-          Instant emergency SOS, live ambulance dispatch, and real-time hospital ICU bed tracking — when every second matters.
-        </p>
+      {/* Top Banner / Premium Hero Heading */}
+      <div className="relative pt-1 sm:pt-2">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute -top-6 -left-6 w-72 h-32 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-10 w-60 h-28 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-3">
+          {/* Top Medical Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 shadow-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-[11px] sm:text-xs font-bold text-teal-800 tracking-wide">
+              24/7 Verified Emergency Grid · Lucknow Region
+            </span>
+          </div>
+
+          {/* High-Impact Stylized Headline */}
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.18] sm:leading-[1.14]">
+            Your Direct{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-800">
+              Lifeline
+            </span>{' '}
+            to the Right Medical Help in{' '}
+            <span className="relative inline-block">
+              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-red-600">
+                Every Emergency.
+              </span>
+              <span className="absolute bottom-1 left-0 right-0 h-2 sm:h-3 bg-rose-500/15 -rotate-1 rounded-md -z-0 pointer-events-none" />
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-2xl font-normal leading-relaxed">
+            Instant emergency SOS, live ambulance dispatch telemetry, and real-time hospital ICU bed tracking — precision care when every second matters.
+          </p>
+
+          {/* Quick Real-Time Capability Indicators (Scrollable on Mobile) */}
+          <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 select-none">
+            <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 text-[11px] font-semibold text-slate-700 shadow-xs">
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+              <span>&lt;10s Rapid SOS Auto-Dispatch</span>
+            </div>
+            <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 text-[11px] font-semibold text-slate-700 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+              <span>10+ Apex Trauma Centers</span>
+            </div>
+            <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 text-[11px] font-semibold text-slate-700 shadow-xs">
+              <Navigation className="w-3.5 h-3.5 text-rose-500" />
+              <span>Sub-Meter GPS Live Routing</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* TOP ROW: SOS Card + Current Location Card */}
