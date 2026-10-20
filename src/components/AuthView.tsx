@@ -9,8 +9,7 @@ import {
   Phone, 
   ArrowRight, 
   ShieldCheck, 
-  Zap, 
-  Check, 
+  CheckCircle2, 
   AlertCircle 
 } from 'lucide-react'
 import { playClick, playEmergencyPulse } from '../utils/emergencyAudio'
@@ -19,11 +18,20 @@ interface AuthViewProps {
   onLoginSuccess: (user: { name: string; phone?: string; email: string; bloodGroup?: string }) => void
 }
 
+interface StoredUser {
+  name: string
+  phone: string
+  email: string
+  password: string
+  bloodGroup: string
+}
+
 export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   // Sign In State
   const [identifier, setIdentifier] = useState('')
@@ -35,20 +43,34 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [bloodGroup, setBloodGroup] = useState('O+')
+  const [signUpPassword, setSignUpPassword] = useState('')
   const [agreeTerms, setAgreeTerms] = useState(true)
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
+  // Helper to get registered users from localStorage
+  const getRegisteredUsers = (): StoredUser[] => {
+    try {
+      const stored = localStorage.getItem('hope_registered_users_db')
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  }
+
+  // Handle Sign In submission
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccessMessage('')
 
-    if (!identifier.trim()) {
-      setError('Please enter your mobile number or email address.')
+    const cleanId = identifier.trim()
+    if (!cleanId) {
+      setError('Please enter your registered mobile number or email.')
       return
     }
     if (!password) {
-      setError('Please enter your account password.')
+      setError('Please enter your password.')
       return
     }
 
@@ -57,34 +79,67 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false)
-      playEmergencyPulse()
-      onLoginSuccess({
-        name: identifier.includes('@') ? identifier.split('@')[0] : 'Aarav Sharma',
-        email: identifier.includes('@') ? identifier : 'aarav.sharma@example.com',
-        phone: !identifier.includes('@') ? identifier : '+91 98765 43210',
-        bloodGroup: 'O+'
-      })
-    }, 800)
+      const users = getRegisteredUsers()
+
+      // Check if matches a registered user
+      const matched = users.find(
+        (u) =>
+          (u.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, '') ||
+           u.email.toLowerCase() === cleanId.toLowerCase() ||
+           u.phone === cleanId) &&
+          u.password === password
+      )
+
+      if (matched) {
+        playEmergencyPulse()
+        onLoginSuccess({
+          name: matched.name,
+          email: matched.email,
+          phone: matched.phone,
+          bloodGroup: matched.bloodGroup
+        })
+        return
+      }
+
+      // Default demo fallback account (9876543210 / password123)
+      if (
+        (cleanId === '9876543210' || cleanId.toLowerCase() === 'aarav@hope.in') &&
+        password === 'password123'
+      ) {
+        playEmergencyPulse()
+        onLoginSuccess({
+          name: 'Aarav Sharma',
+          email: 'aarav@hope.in',
+          phone: '+91 98765 43210',
+          bloodGroup: 'O+'
+        })
+        return
+      }
+
+      setError('Incorrect mobile number/email or password. Please check your credentials or create a new account.')
+    }, 600)
   }
 
+  // Handle Sign Up submission -> switches to Sign In with credentials!
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccessMessage('')
 
     if (!fullName.trim()) {
-      setError('Please enter your full name for emergency medical identification.')
+      setError('Please enter your full legal name for emergency medical identification.')
       return
     }
     if (!phone.trim()) {
-      setError('Please enter your 10-digit mobile number for SOS notifications.')
+      setError('Please enter your 10-digit mobile number.')
       return
     }
-    if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (!signUpPassword || signUpPassword.length < 6) {
+      setError('Password must be at least 6 characters long.')
       return
     }
     if (!agreeTerms) {
-      setError('Please agree to emergency response protocol terms.')
+      setError('Please agree to emergency response telemetry terms.')
       return
     }
 
@@ -93,28 +148,34 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false)
-      playEmergencyPulse()
-      onLoginSuccess({
-        name: fullName.trim(),
-        email: email.trim() || `${fullName.toLowerCase().replace(/\s+/g, '')}@emergency.in`,
-        phone: phone.trim(),
-        bloodGroup
-      })
-    }, 1000)
-  }
+      const cleanPhone = phone.trim()
+      const cleanName = fullName.trim()
+      const cleanEmail = email.trim() || `${cleanPhone}@hope.in`
 
-  const handleQuickDemoAccess = () => {
-    playEmergencyPulse()
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      onLoginSuccess({
-        name: 'Aarav Sharma',
-        email: 'aarav.sharma@lucknow-health.in',
-        phone: '+91 98765 43210',
-        bloodGroup: 'O+'
-      })
-    }, 400)
+      const newUser: StoredUser = {
+        name: cleanName,
+        phone: cleanPhone,
+        email: cleanEmail,
+        password: signUpPassword,
+        bloodGroup
+      }
+
+      // Save to localStorage users db
+      const existingUsers = getRegisteredUsers()
+      // Filter out duplicate if same phone exists
+      const updated = [newUser, ...existingUsers.filter((u) => u.phone !== cleanPhone && u.email !== cleanEmail)]
+      localStorage.setItem('hope_registered_users_db', JSON.stringify(updated))
+
+      playEmergencyPulse()
+
+      // Pre-fill Sign In fields with newly registered credentials
+      setIdentifier(cleanPhone)
+      setPassword('')
+      setSuccessMessage(`Account created successfully for ${cleanName}! Please enter your password to sign in.`)
+
+      // Switch to Sign In tab!
+      setMode('signin')
+    }, 800)
   }
 
   return (
@@ -153,7 +214,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
           {/* Subtle Top Border Gradient */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-emerald-400 to-rose-500" />
 
-          {/* Tab Switcher: Sign In vs Sign Up */}
+          {/* Tab Switcher: Sign In vs Create Account */}
           <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-950/80 border border-slate-800/80 mb-5">
             <button
               type="button"
@@ -176,6 +237,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 playClick()
                 setMode('signup')
                 setError('')
+                setSuccessMessage('')
               }}
               className={`py-2 rounded-xl text-xs font-extrabold transition-all ${
                 mode === 'signup'
@@ -187,9 +249,17 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
             </button>
           </div>
 
+          {/* Success Banner after Creating Account */}
+          {successMessage && (
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs flex items-start gap-2 animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
+              <span>{successMessage}</span>
+            </div>
+          )}
+
           {/* Error Banner */}
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+            <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
               <span>{error}</span>
             </div>
@@ -201,15 +271,16 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wide">
-                  Mobile Number / Email
+                  Registered Mobile / Email
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
+                    required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. 9876543210 or name@gmail.com"
+                    placeholder="e.g. 9876543210 or your email"
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
                   />
                 </div>
@@ -222,19 +293,23 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   </label>
                   <button
                     type="button"
-                    onClick={() => alert('Demo PIN for testing: password123')}
+                    onClick={() => {
+                      playClick()
+                      alert('If you created an account, use your chosen password. For default testing: 9876543210 / password123')
+                    }}
                     className="text-[11px] text-teal-400 hover:text-teal-300 transition-colors"
                   >
-                    Forgot?
+                    Forgot Password?
                   </button>
                 </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password"
+                    placeholder="Enter your password"
                     className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all font-mono"
                   />
                   <button
@@ -256,7 +331,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 rounded text-teal-600 bg-slate-950 border-slate-700 focus:ring-teal-500"
                   />
-                  <span>Stay logged in on this phone</span>
+                  <span>Remember me on this device</span>
                 </label>
               </div>
 
@@ -277,7 +352,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
               </button>
             </form>
           ) : (
-            /* SIGN UP FORM */
+            /* CREATE ACCOUNT (SIGN UP) FORM */
             <form onSubmit={handleSignUp} className="space-y-3.5">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-wide">
@@ -287,6 +362,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
+                    required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Aarav Sharma"
@@ -298,12 +374,13 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-wide">
-                    Mobile (+91)
+                    Mobile Number (+91)
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="tel"
+                      required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="9876543210"
@@ -314,7 +391,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-wide">
-                    Email (Optional)
+                    Email Address (Optional)
                   </label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -322,7 +399,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="aarav@gmail.com"
+                      placeholder="name@gmail.com"
                       className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-teal-500 transition-all"
                     />
                   </div>
@@ -332,7 +409,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
               {/* Blood Group Quick Select */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide mb-1.5">
-                  Blood Group (Emergency Transfusion)
+                  Blood Group (Emergency Transfusion Match)
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
                   {bloodGroups.map((bg) => (
@@ -363,8 +440,9 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    value={signUpPassword}
+                    onChange={(e) => setSignUpPassword(e.target.value)}
                     placeholder="Min 6 characters"
                     className="w-full pl-10 pr-10 py-2 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-teal-500 font-mono"
                   />
@@ -386,7 +464,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   onChange={(e) => setAgreeTerms(e.target.checked)}
                   className="w-4 h-4 mt-0.5 rounded text-teal-600 bg-slate-950 border-slate-700"
                 />
-                <span>I agree to high-priority emergency telemetry sharing with authorized hospitals & paramedics during SOS.</span>
+                <span>I agree to emergency response telemetry sharing with authorized hospitals & paramedics during SOS.</span>
               </label>
 
               {/* Submit Sign Up Button */}
@@ -400,27 +478,12 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Create Account & Activate Grid</span>
+                    <span>Create Account & Proceed to Sign In</span>
                   </>
                 )}
               </button>
             </form>
           )}
-
-          {/* Quick Demo Bypass Access Button */}
-          <div className="mt-5 pt-4 border-t border-slate-800 text-center">
-            <button
-              type="button"
-              onClick={handleQuickDemoAccess}
-              className="w-full py-2.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 text-teal-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 group shadow-sm"
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              <span>⚡ One-Click Instant Demo Login (Aarav Sharma)</span>
-            </button>
-            <p className="text-[10px] text-slate-500 mt-2">
-              For evaluation: click above to immediately test all emergency features.
-            </p>
-          </div>
 
         </div>
 
