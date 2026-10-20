@@ -71,17 +71,6 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <div className="absolute top-0 right-10 w-60 h-28 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-3">
-          {/* Top Medical Trust Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 shadow-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-[11px] sm:text-xs font-bold text-teal-800 tracking-wide">
-              24/7 Verified Emergency Grid · Lucknow Region
-            </span>
-          </div>
-
           {/* High-Impact Stylized Headline */}
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.18] sm:leading-[1.14]">
             Your Direct{' '}
