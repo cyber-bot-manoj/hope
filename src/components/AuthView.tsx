@@ -190,13 +190,6 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
         
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 mb-3 shadow-inner">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-[11px] font-bold tracking-wider uppercase text-teal-300">
-              Emergency Medical Grid
-            </span>
-          </div>
-
           <div className="flex items-center justify-center gap-2.5 mb-1">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/30">
               <HeartPulse className="w-6 h-6 animate-pulse" />
@@ -345,7 +338,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>Sign In to HOPE Grid</span>
+                    <span>Sign In to HOPE</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -485,18 +478,6 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
             </form>
           )}
 
-        </div>
-
-        {/* Bottom Trust Badges */}
-        <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-slate-500 select-none">
-          <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-500" />
-            <span>256-Bit Encrypted</span>
-          </span>
-          <span>·</span>
-          <span>&lt;10s SOS Ready</span>
-          <span>·</span>
-          <span>Lucknow ER Network</span>
         </div>
 
       </div>
