@@ -1,6 +1,6 @@
 import React from 'react'
-import { Menu, HeartPulse, MapPin, AlertTriangle, ChevronDown } from 'lucide-react'
-import { playClick, playEmergencyPulse } from '../utils/emergencyAudio'
+import { Menu, HeartPulse, MapPin, ChevronDown } from 'lucide-react'
+import { playClick } from '../utils/emergencyAudio'
 
 interface MobileHeaderProps {
   currentLocation: {
@@ -8,36 +8,25 @@ interface MobileHeaderProps {
     isDetecting?: boolean
   }
   onOpenEditLocation: () => void
-  onTriggerSos: () => void
+  onTriggerSos?: () => void
   onOpenMenu: () => void
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = ({
   currentLocation,
   onOpenEditLocation,
-  onTriggerSos,
   onOpenMenu
 }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-14 bg-[#0a1826]/95 backdrop-blur-md border-b border-slate-800/80 px-3 flex items-center justify-between md:hidden select-none">
-      {/* Left: Hamburger + Logo */}
-      <div className="flex items-center gap-2.5">
-        <button
-          onClick={() => {
-            playClick()
-            onOpenMenu()
-          }}
-          className="p-2 rounded-xl bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700/80 active:scale-95 transition-all"
-          aria-label="Open Navigation Menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        <div className="flex items-center gap-1.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-sm shadow-teal-500/20 shrink-0">
-            <HeartPulse className="w-4 h-4 animate-pulse" />
-          </div>
-          <span className="font-extrabold text-white text-base tracking-wider">HOPE</span>
+    <header className="fixed top-0 left-0 right-0 z-40 h-14 bg-[#0a1826]/95 backdrop-blur-md border-b border-slate-800/80 px-3.5 flex items-center justify-between md:hidden select-none">
+      {/* Left: HOPE Brand Logo */}
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-sm shadow-teal-500/20 shrink-0">
+          <HeartPulse className="w-4.5 h-4.5 animate-pulse" />
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="font-black text-white text-lg tracking-wider">HOPE</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
         </div>
       </div>
 
@@ -47,7 +36,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           playClick()
           onOpenEditLocation()
         }}
-        className="max-w-[150px] sm:max-w-[200px] px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 text-[11px] truncate active:scale-95 transition-all"
+        className="max-w-[150px] sm:max-w-[200px] px-2.5 py-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 text-[11px] truncate active:scale-95 transition-all"
         title="Tap to change or detect location"
       >
         <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
@@ -55,16 +44,16 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
         <ChevronDown className="w-2.5 h-2.5 text-slate-400 shrink-0" />
       </button>
 
-      {/* Right: Quick SOS Emergency Pill */}
+      {/* Right: 3-line Hamburger Menu Button */}
       <button
         onClick={() => {
-          playEmergencyPulse()
-          onTriggerSos()
+          playClick()
+          onOpenMenu()
         }}
-        className="px-3 py-1.5 rounded-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs shadow-md shadow-rose-600/40 flex items-center gap-1 animate-pulse active:scale-95 transition-all shrink-0"
+        className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 active:scale-95 transition-all flex items-center justify-center"
+        aria-label="Open Navigation Menu"
       >
-        <AlertTriangle className="w-3.5 h-3.5" />
-        <span>SOS</span>
+        <Menu className="w-5 h-5" />
       </button>
     </header>
   )
