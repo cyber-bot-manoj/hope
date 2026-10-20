@@ -14,6 +14,7 @@ import { SettingsView } from './components/SettingsView'
 import { LocationEditModal } from './components/LocationEditModal'
 import { MobileHeader } from './components/MobileHeader'
 import { MobileBottomNav } from './components/MobileBottomNav'
+import { AuthView } from './components/AuthView'
 import { 
   initialHospitals, 
   initialAmbulance, 
@@ -31,11 +32,64 @@ import {
 import { playClick, playEmergencyPulse } from './utils/emergencyAudio'
 
 export const App: React.FC = () => {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('hope_auth_logged_in') === 'true'
+  })
+  const [currentUser, setCurrentUser] = useState<{
+    name: string
+    phone?: string
+    email: string
+    bloodGroup?: string
+  } | null>(() => {
+    const saved = localStorage.getItem('hope_user')
+    return saved ? JSON.parse(saved) : null
+  })
+
   const [currentView, setCurrentView] = useState<AppView>('home')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hospitals, setHospitals] = useState<Hospital[]>(initialHospitals)
   const [ambulance, setAmbulance] = useState<Ambulance>(initialAmbulance)
-  const [profile, setProfile] = useState<EmergencyProfileData>(initialProfileData)
+  const [profile, setProfile] = useState<EmergencyProfileData>(() => {
+    const savedUser = localStorage.getItem('hope_user')
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser)
+        return {
+          ...initialProfileData,
+          fullName: parsed.name || initialProfileData.fullName,
+          bloodGroup: parsed.bloodGroup || initialProfileData.bloodGroup,
+          primaryContactPhone: parsed.phone || initialProfileData.primaryContactPhone
+        }
+      } catch {
+        return initialProfileData
+      }
+    }
+    return initialProfileData
+  })
+
+  const handleLoginSuccess = (user: { name: string; phone?: string; email: string; bloodGroup?: string }) => {
+    localStorage.setItem('hope_auth_logged_in', 'true')
+    localStorage.setItem('hope_user', JSON.stringify(user))
+    setIsAuthenticated(true)
+    setCurrentUser(user)
+    if (user.name) {
+      setProfile((prev) => ({
+        ...prev,
+        fullName: user.name,
+        bloodGroup: user.bloodGroup || prev.bloodGroup,
+        primaryContactPhone: user.phone || prev.primaryContactPhone
+      }))
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('hope_auth_logged_in')
+    localStorage.removeItem('hope_user')
+    setIsAuthenticated(false)
+    setCurrentUser(null)
+    setCurrentView('home')
+  }
   const [contacts, setContacts] = useState<TrustedContact[]>(initialContacts)
   const [activeEmergencies, setActiveEmergencies] = useState<EmergencyRequest[]>([])
   const [currentLocation, setCurrentLocation] = useState({
@@ -160,6 +214,11 @@ export const App: React.FC = () => {
     alert(`Alert sent to ${hosp.name} Emergency Desk! ER triage bed reserved for patient arrival.`)
   }
 
+  // FIRST SCREEN: If user is not logged in, show the Login / Sign Up Page first!
+  if (!isAuthenticated) {
+    return <AuthView onLoginSuccess={handleLoginSuccess} />
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col md:flex-row font-sans selection:bg-teal-500/20 selection:text-teal-900 overflow-x-hidden">
       
@@ -179,6 +238,7 @@ export const App: React.FC = () => {
         activeEmergencyCount={activeEmergencies.length}
         isMobileOpen={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Viewport */}
@@ -262,7 +322,7 @@ export const App: React.FC = () => {
         )}
 
         {currentView === 'settings' && (
-          <SettingsView />
+          <SettingsView onLogout={handleLogout} />
         )}
       </main>
 

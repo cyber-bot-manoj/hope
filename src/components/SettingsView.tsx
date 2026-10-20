@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
-import { Settings, Volume2, Globe, Shield, Moon, Sun, Bell, RefreshCw } from 'lucide-react'
+import { Settings, Volume2, Globe, Shield, Moon, Sun, Bell, RefreshCw, LogOut } from 'lucide-react'
 import { playEmergencyPulse, playClick } from '../utils/emergencyAudio'
 
-export const SettingsView: React.FC = () => {
+interface SettingsViewProps {
+  onLogout?: () => void
+}
+
+export const SettingsView: React.FC<SettingsViewProps> = ({ onLogout }) => {
   const [lang, setLang] = useState<'hi' | 'en'>('hi')
   const [smsAlerts, setSmsAlerts] = useState(true)
   const [sirenVolume, setSirenVolume] = useState(80)
@@ -96,6 +100,26 @@ export const SettingsView: React.FC = () => {
             <span>Reset</span>
           </button>
         </div>
+
+        {/* Sign Out Section */}
+        {onLogout && (
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div>
+              <h4 className="text-sm font-bold text-slate-900">Sign Out of Emergency Account</h4>
+              <p className="text-xs text-slate-500">Log out from this device and return to login screen</p>
+            </div>
+            <button
+              onClick={() => {
+                playClick()
+                onLogout()
+              }}
+              className="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 border border-rose-200 shadow-xs"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
+          </div>
+        )}
 
       </div>
     </div>

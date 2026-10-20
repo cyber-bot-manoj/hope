@@ -13,7 +13,8 @@ import {
   Settings,
   HeartPulse,
   PhoneCall,
-  X
+  X,
+  LogOut
 } from 'lucide-react'
 import { AppView } from '../types/hope'
 import { playClick } from '../utils/emergencyAudio'
@@ -25,6 +26,7 @@ interface SidebarProps {
   activeEmergencyCount: number
   isMobileOpen?: boolean
   onCloseMobile?: () => void
+  onLogout?: () => void
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -33,7 +35,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTriggerSos,
   activeEmergencyCount,
   isMobileOpen = false,
-  onCloseMobile
+  onCloseMobile,
+  onLogout
 }) => {
   const menuItems: { id: AppView; label: string; icon: React.ElementType; badge?: string }[] = [
     { id: 'home', label: 'Home', icon: Home },
@@ -130,6 +133,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             )
           })}
+
+          {onLogout && (
+            <button
+              onClick={() => {
+                playClick()
+                if (onCloseMobile) onCloseMobile()
+                onLogout()
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:bg-rose-500/10 hover:text-rose-300 transition-all group mt-2"
+            >
+              <div className="flex items-center gap-3">
+                <LogOut className="w-4 h-4 text-slate-400 group-hover:text-rose-400 transition-colors" />
+                <span>Sign Out</span>
+              </div>
+            </button>
+          )}
         </nav>
       </div>
 
